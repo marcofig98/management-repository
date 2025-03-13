@@ -23,7 +23,6 @@ public class ItemService {
 
     }
 
-
     public ItemDTO createItem(ItemDTO itemDTO) {
 
         Item item = ItemMapper.toEntity(itemDTO);
@@ -62,7 +61,6 @@ public class ItemService {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException(id));
 
-        // Verifica se o novo nome já está em uso
         Optional<Item> existingItem = itemRepository.findByName(itemDTO.getName());
         if (existingItem.isPresent()) {
             throw new ItemConflictException(itemDTO.getName());
@@ -74,7 +72,6 @@ public class ItemService {
         log.info("Item updated: {}", updatedItem.getId());
         return ItemMapper.toDTO(updatedItem);
     }
-
 
     public void deleteItem(UUID id) {
 
