@@ -57,7 +57,7 @@ Before running the application, ensure you have the following installed on your 
 
 ## Access Swagger UI
 
-Once the application is running, you can access the **Swagger UI** at: http://localhost:8080/swagger-ui.html
+Once the application is running, you can access the **Swagger UI** at: http://localhost:8080/api/swagger-ui.html
 Here you can explore and interact with the available endpoints of the API.
 
 
