@@ -1,6 +1,6 @@
-package com.management.demo.Entities;
+package com.management.demo.stockmovements;
 
-import lombok.AllArgsConstructor;
+import com.management.demo.items.Item;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

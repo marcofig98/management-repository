@@ -1,6 +1,6 @@
-package com.management.demo.Entities;
+package com.management.demo.users;
 
-
+import com.management.demo.orders.Order;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,12 +9,12 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "items")
-public class Item {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,15 +22,14 @@ public class Item {
 
     private String name;
 
-    @OneToMany(mappedBy = "item")
-    private List<StockMovement> stockMovements;
+    private String email;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
-    public Item(String name, List<StockMovement> stockMovements, List<Order> orders) {
+    public User(String name, String email, List<Order> orders) {
         this.name = name;
-        this.stockMovements = stockMovements;
+        this.email = email;
         this.orders = orders;
     }
 }
