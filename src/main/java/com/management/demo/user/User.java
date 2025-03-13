@@ -1,6 +1,6 @@
-package com.management.demo.users;
+package com.management.demo.user;
 
-import com.management.demo.orders.Order;
+import com.management.demo.order.Order;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
