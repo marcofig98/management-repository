@@ -2,8 +2,11 @@ package com.management.demo.users;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,12 +26,14 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO) {
 
-        User user = UserMapper.toEntity(userDTO);
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
+
+        User user = new User(userDTO.getName(), userDTO.getEmail(), new ArrayList<>());
         user = userRepository.save(user);
 
-        log.info("User created: {}", user.getId());
-
-        return UserMapper.toDTO(user);
+        return new UserDTO(user.getId(), user.getName(), user.getEmail());
     }
 
 
