@@ -3,6 +3,13 @@ server:
   servlet:
     context-path: /api
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+
 spring:
   application:
     name: management-api
