@@ -14,4 +14,5 @@ public interface IOrderRepository extends JpaRepository<Order, UUID> {
     Order findFirstByItemAndStatusOrderByCreatedDateAsc(Item item, OrderStatus status);
 
     List<Order> findByItemAndStatus(Item item, OrderStatus status);
+    List<Order> findByStatus(OrderStatus status);
 }

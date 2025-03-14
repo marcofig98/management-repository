@@ -3,6 +3,7 @@ package com.management.demo.order;
 import com.management.demo.item.IItemRepository;
 import com.management.demo.item.Item;
 import com.management.demo.item.exception.ItemNotFoundException;
+import com.management.demo.order.exception.OrderNotFoundException;
 import com.management.demo.stockmovement.IStockMovementRepository;
 import com.management.demo.stockmovement.StockMovement;
 import com.management.demo.user.User;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -88,6 +92,29 @@ public class OrderService {
 
         emailService.sendOrderConfirmationEmail(order.getUser().getEmail(), orderDetails);
         log.info("ORDER COMPLETED " + order.getId());
+    }
+
+    public List<OrderDTO> getAllOrders(OrderStatus status) {
+        List<Order> orders;
+
+        if (status != null) {
+            orders = orderRepository.findByStatus(status);
+        } else {
+            orders = orderRepository.findAll();
+        }
+
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+
+        for (Order order : orders) {
+            orderDTOs.add(OrderMapper.toDTO(order));
+        }
+        return orderDTOs;
+    }
+
+    public OrderDTO getOrderById(UUID id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+        return OrderMapper.toDTO(order);
     }
 
 }
