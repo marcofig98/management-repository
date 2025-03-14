@@ -46,27 +46,28 @@ public class StockMovementService {
         Item item = itemRepository.findById(stockMovementDTO.getItem().getId())
                 .orElseThrow(() -> new ItemNotFoundException(stockMovementDTO.getItem().getId()));
 
-
         StockMovement stockMovement = new StockMovement(item, stockMovementDTO.getQuantity());
         stockMovementRepository.save(stockMovement);
 
-
-        processOrders(item, stockMovement);
+        processOrders(item);
 
         return new StockMovementDTO(stockMovement.getId(), stockMovement.getCreationDate(),
                 new ItemDTO(item.getId(), item.getName()),
                 stockMovement.getQuantity());
     }
 
-    private void processOrders(Item item, StockMovement newStockMovement) throws MessagingException {
-        List<Order> pendingOrders = orderRepository.findByItemAndStatus(item, OrderStatus.PENDING);
+    private void processOrders(Item item) throws MessagingException {
 
+        List<Order> pendingOrders = orderRepository.findByItemAndStatus(item, OrderStatus.PENDING);
         Integer availableStock = stockMovementRepository.getTotalQuantityByItem(item.getId());
 
         for (Order order : pendingOrders) {
-            int missingQuantity = order.getQuantity() - order.getTotalStockMovementsQuantity();
+
+            int totalStockMovements = order.getTotalStockMovements();
+            int missingQuantity = order.getQuantity() + totalStockMovements; //+ because the numbers stock movements associated to the order are negative numbers
 
             if (availableStock > 0 && missingQuantity > 0) {
+
                 int allocatedQuantity = Math.min(availableStock, missingQuantity);
 
                 StockMovement movementForOrder = new StockMovement(item, -allocatedQuantity);
@@ -74,7 +75,8 @@ public class StockMovementService {
 
                 order.addStockMovement(movementForOrder);
 
-                if (availableStock>=missingQuantity) {
+                // if there is still available stock
+                if (availableStock >= missingQuantity) {
                     order.completeOrder();
 
                     sendOrderConfirmationEmail(order, item);

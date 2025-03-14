@@ -18,7 +18,7 @@ public class StockMovementMapper {
         );
     }
 
-    public static List<StockMovementDTO> toDTO(List<StockMovement> stockMovements) {
+    public static List<StockMovementDTO> toDTOList(List<StockMovement> stockMovements) {
         return stockMovements.stream()
                 .map(StockMovementMapper::toDTO)
                 .collect(Collectors.toList());

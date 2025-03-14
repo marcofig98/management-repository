@@ -52,8 +52,7 @@ public class Order {
         this.user = user;
     }
 
-    // Calculates the total number of items moved for this order
-    public int getTotalStockMovementsQuantity() {
+    public int getTotalStockMovements() {
         return stockMovements.stream().mapToInt(StockMovement::getQuantity).sum();
     }
 
@@ -64,6 +63,5 @@ public class Order {
     // Associates a StockMovement with the order without modifying the StockMovement in the database
     public void addStockMovement(StockMovement stockMovement) {
         this.stockMovements.add(stockMovement);
-        completeOrder();
     }
 }

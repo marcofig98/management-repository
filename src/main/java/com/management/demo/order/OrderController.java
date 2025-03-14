@@ -1,5 +1,7 @@
 package com.management.demo.order;
 
+import com.management.demo.stockmovement.StockMovement;
+import com.management.demo.stockmovement.StockMovementDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +42,13 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     public OrderDTO getOrderById(@PathVariable("id") UUID id) {
         return orderService.getOrderById(id);
+    }
+
+    @GetMapping("/{id}/stock-movements")
+    @Operation(summary = "Get Stock-movements by Order ID", description = "This endpoint returns a List of stock-movements by order ID.")
+    @ResponseStatus(HttpStatus.OK)
+    public List<StockMovementDTO>getStockMovementsByOrderId(@PathVariable("id") UUID id) {
+        return orderService.getStockMovementsByOrderId(id);
     }
 }
 
