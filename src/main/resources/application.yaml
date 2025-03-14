@@ -40,6 +40,21 @@ spring:
       password: admin
       roles: ADMIN
 
+  spring:
+    mail:
+      host: smtp-mail.outlook.com
+      port: 587
+      username: ${MAIL_USERNAME}
+      password: ${MAIL_PASSWORD}
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+      default-encoding: UTF-8
+
+
 logging:
   level:
     root: INFO

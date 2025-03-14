@@ -1,4 +1,4 @@
-package com.management.demo.users;
+package com.management.demo.user;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

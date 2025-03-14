@@ -1,10 +1,10 @@
-package com.management.demo.users;
+package com.management.demo.user;
 
+import com.management.demo.user.exceptions.UserConflictException;
+import com.management.demo.user.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class UserService {
     public UserDTO createUser(UserDTO userDTO) {
 
         if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw new UserConflictException(userDTO.getEmail());
         }
 
         User user = new User(userDTO.getName(), userDTO.getEmail(), new ArrayList<>());
@@ -74,7 +74,7 @@ public class UserService {
             return UserMapper.toDTO(userToUpdate);
         }
 
-        throw new RuntimeException("User not found with id: " + id);
+        throw new UserNotFoundException(id);
     }
 
     public void deleteUser(UUID id) {

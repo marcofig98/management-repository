@@ -1,4 +1,4 @@
-package com.management.demo.users;
+package com.management.demo.user;
 
 import java.util.ArrayList;
 

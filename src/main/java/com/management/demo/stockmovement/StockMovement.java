@@ -1,6 +1,6 @@
-package com.management.demo.users;
+package com.management.demo.stockmovement;
 
-import com.management.demo.orders.Order;
+import com.management.demo.item.Item;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,35 +9,30 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "users")
+@Table(name = "stock_movements")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class StockMovement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String name;
-
-    @Column(unique = true)
-    private String email;
-
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders;
-
     @CreatedDate
     private LocalDateTime creationDate;
 
-    public User(String name, String email, List<Order> orders) {
-        this.name = name;
-        this.email = email;
-        this.orders = orders;
+    @ManyToOne
+    private Item item;
+
+    private Integer quantity;
+
+    public StockMovement(Item item, Integer quantity) {
+        this.item = item;
+        this.quantity = quantity;
     }
 }
