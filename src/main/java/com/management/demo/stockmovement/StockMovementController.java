@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+
 @RestController
 @RequestMapping("/stock-movements")
 public class StockMovementController {
@@ -17,8 +19,7 @@ public class StockMovementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public StockMovementDTO createStockMovement(@RequestBody StockMovementDTO stockMovementDTO) {
-        // Chama o serviço para criar o StockMovement e retornar o DTO
+    public StockMovementDTO createStockMovement(@RequestBody StockMovementDTO stockMovementDTO) throws MessagingException {
         return stockMovementService.createStockMovement(stockMovementDTO);
     }
 }
