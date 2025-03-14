@@ -40,19 +40,21 @@ spring:
       password: admin
       roles: ADMIN
 
-  spring:
-    mail:
-      host: smtp-mail.outlook.com
-      port: 587
-      username: ${MAIL_USERNAME}
-      password: ${MAIL_PASSWORD}
-      properties:
-        mail:
-          smtp:
-            auth: true
-            starttls:
-              enable: true
-      default-encoding: UTF-8
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME} #you can use environment variables or type here your configured email
+    password: ${MAIL_PASSWORD} #you can use environment variables or type here your configured email application password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+    default-encoding: UTF-8
+
 
 
 logging:
