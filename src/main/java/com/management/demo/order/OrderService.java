@@ -66,10 +66,7 @@ public class OrderService {
             StockMovement stockMovement = new StockMovement(item, -orderDTO.getQuantity());
             stockMovementRepository.save(stockMovement);
 
-            //todo fix thisto send email email
-            //String orderDetails = "Order ID: " + order.getId() + "\nItem: " + item.getName() + "\nQuantity: " + order.getQuantity();
-            //emailService.sendOrderConfirmationEmail(user.getEmail(), orderDetails);  // Enviar email
-            log.info("ORDER COMPLETED -----------------" + order);
+            sendOrderConfirmationEmail(order);
 
             return OrderMapper.toDTO(order);  // Retornar o DTO da ordem criada
         } else {
@@ -80,6 +77,17 @@ public class OrderService {
 
             return OrderMapper.toDTO(order);
         }
+    }
+
+    private void sendOrderConfirmationEmail(Order order) throws MessagingException {
+
+        String orderDetails = "Order ID: " + order.getId() +
+                "\nItem: " + order.getItem().getName() +
+                "\nQuantity: " + order.getQuantity() +
+                "\nStatus: " + order.getStatus();
+
+        emailService.sendOrderConfirmationEmail(order.getUser().getEmail(), orderDetails);
+        log.info("ORDER COMPLETED " + order.getId());
     }
 
 }
