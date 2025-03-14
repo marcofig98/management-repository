@@ -10,6 +10,6 @@ import java.util.UUID;
 public class ItemNotFoundException extends RuntimeException {
 
     public ItemNotFoundException(UUID itemId) {
-        super("Item Not Found"+ itemId);
+        super("Item Not Found " + itemId);
     }
 }
