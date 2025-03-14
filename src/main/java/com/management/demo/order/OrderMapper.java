@@ -12,6 +12,7 @@ public class OrderMapper {
                 order.getCreatedDate(),
                 ItemMapper.toDTO(order.getItem()),
                 order.getQuantity(),
+                order.getStatus(),
                 UserMapper.toDTO(order.getUser()),
                 StockMovementMapper.toDTOList(order.getStockMovements())
         );

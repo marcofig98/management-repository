@@ -25,7 +25,11 @@ public class OrderDTO {
     private LocalDateTime creationDate;
     private ItemDTO item;
     private Integer quantity;
+    @ReadOnlyProperty
+    @Hidden
+    private OrderStatus orderStatus;
     private UserDTO user;
     @Hidden
     private List<StockMovementDTO> stockMovements;
+
 }

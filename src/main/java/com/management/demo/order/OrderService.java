@@ -2,10 +2,12 @@ package com.management.demo.order;
 
 import com.management.demo.item.IItemRepository;
 import com.management.demo.item.Item;
+import com.management.demo.item.ItemDTO;
 import com.management.demo.item.exception.ItemNotFoundException;
 import com.management.demo.order.exception.OrderNotFoundException;
 import com.management.demo.stockmovement.IStockMovementRepository;
 import com.management.demo.stockmovement.StockMovement;
+import com.management.demo.stockmovement.StockMovementDTO;
 import com.management.demo.user.User;
 import com.management.demo.user.IUserRepository;
 import com.management.demo.user.exceptions.UserNotFoundException;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -64,15 +67,17 @@ public class OrderService {
 
             Order order = new Order(item, orderDTO.getQuantity(), user);
             order.setStatus(OrderStatus.COMPLETED);
-            orderRepository.save(order);
 
             // create stock movement
             StockMovement stockMovement = new StockMovement(item, -orderDTO.getQuantity());
             stockMovementRepository.save(stockMovement);
 
+            order.addStockMovement(stockMovement);
+            orderRepository.save(order);
+
             sendOrderConfirmationEmail(order);
 
-            return OrderMapper.toDTO(order);  // Retornar o DTO da ordem criada
+            return OrderMapper.toDTO(order);
         } else {
 
             Order order = new Order(item, orderDTO.getQuantity(), user);
@@ -115,6 +120,30 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
         return OrderMapper.toDTO(order);
+    }
+
+
+    public List<StockMovementDTO> getStockMovementsByOrderId(UUID orderId) {
+
+        Optional<Order> maybeOrder = orderRepository.findById(orderId);
+
+        if(maybeOrder.isPresent()){
+            Order order = maybeOrder.get();
+            List<StockMovementDTO> stockMovementDTOs = new ArrayList<>();
+
+            for (StockMovement stockMovement : order.getStockMovements()){
+
+                StockMovementDTO stockMovementDTO = new StockMovementDTO(
+                        stockMovement.getId(),
+                        stockMovement.getCreationDate(),
+                        new ItemDTO(stockMovement.getItem().getId(), stockMovement.getItem().getName()),
+                        stockMovement.getQuantity()
+                );
+                stockMovementDTOs.add(stockMovementDTO);
+            }
+            return  stockMovementDTOs;
+        }
+        return new ArrayList<>();
     }
 
 }
