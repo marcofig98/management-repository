@@ -65,12 +65,9 @@ Your `application.yaml` should look something like this:
 
 ```yaml
 spring:
-"..."
   mail:
     username: youremail@gmail.com
-    password: your_generated_app_password
-"..."
-    
+    password: your_generated_app_password 
 
 
 ## Run the Application
