@@ -2,6 +2,7 @@ package com.management.demo.exception;
 
 import com.management.demo.item.exception.ItemConflictException;
 import com.management.demo.item.exception.ItemNotFoundException;
+import com.management.demo.order.exception.OrderNotFoundException;
 import com.management.demo.user.exceptions.UserConflictException;
 import com.management.demo.user.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -57,6 +58,16 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+    // Handle UserNotFoundException
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotFound(UserNotFoundException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     // Handle NoHandlerFoundException (for 404 errors like invalid endpoints)
