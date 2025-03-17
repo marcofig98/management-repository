@@ -35,7 +35,7 @@ public class ItemService {
 
         Item savedItem = itemRepository.save(item);
 
-        log.info("Item created: {}", item.getId());
+        log.info("Item created with id {} and name {}", item.getId(), item.getName());
 
         return ItemMapper.toDTO(savedItem);
     }
@@ -70,7 +70,7 @@ public class ItemService {
         item.setName(itemDTO.getName());
         Item updatedItem = itemRepository.save(item);
 
-        log.info("Item updated: {}", updatedItem.getId());
+        log.info("Item updated with {} and new name {}", updatedItem.getId(), updatedItem.getName());
         return ItemMapper.toDTO(updatedItem);
     }
 

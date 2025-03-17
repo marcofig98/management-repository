@@ -33,6 +33,8 @@ public class UserService {
         User user = new User(userDTO.getName(), userDTO.getEmail(), new ArrayList<>());
         user = userRepository.save(user);
 
+        log.info("User created with id {}; name: {} and email: {}", user.getId(), user.getName(), user.getEmail());
+
         return new UserDTO(user.getId(), user.getName(), user.getEmail());
     }
 
@@ -70,7 +72,7 @@ public class UserService {
 
             userToUpdate = userRepository.save(userToUpdate);
 
-            log.info("User updated: {}", userToUpdate.getId());
+            log.info("User updated with id {}; name: {} and email: {}", userToUpdate.getId(), userToUpdate.getName(), userToUpdate.getEmail());
 
             return UserMapper.toDTO(userToUpdate);
         }
