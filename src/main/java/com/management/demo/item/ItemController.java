@@ -24,7 +24,7 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create new item")
+    @Operation(summary = "Create new item", description = "You should not provide id in the body, provide only name")
     public ItemDTO createItem(@RequestBody ItemDTO itemDTO) {
         return itemService.createItem(itemDTO);
     }
@@ -45,7 +45,7 @@ public class ItemController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update Item name")
+    @Operation(summary = "Update Item name", description = "You should not provide id in the body, provide only name")
     public ItemDTO updateItemName(@PathVariable UUID id, @RequestBody ItemDTO itemDTO) {
         itemDTO.setId(id);
         return itemService.updateItemName(itemDTO);

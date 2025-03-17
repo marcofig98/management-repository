@@ -24,14 +24,17 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create new user")
+    @Operation(summary = "Create new user",
+            description = "You should not provide id in the body, provide only name and email.")
     public UserDTO createUser(@RequestBody UserDTO user) {
         return userService.createUser(user);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update user", description = "name and email can be changed")
+    @Operation(summary = "Update user",
+            description = "You should not provide id in the body, provide only name, email or both." +
+            " Name and email can be changed")
     public UserDTO updateUser(@PathVariable UUID id, @RequestBody UserDTO userDTO) {
         return userService.updateUser(id, userDTO);
     }
