@@ -57,7 +57,8 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public ItemDTO updateItemName(UUID id, ItemDTO itemDTO) {
+    public ItemDTO updateItemName(ItemDTO itemDTO) {
+        UUID id = itemDTO.getId();
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException(id));
 
