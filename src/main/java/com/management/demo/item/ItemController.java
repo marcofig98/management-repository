@@ -52,6 +52,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete item", description = "This endpoint will not work if the item has any associated orders, " +
             "as deleting the item would result in the loss of important information. " +
             "Removing this information would require additional specifications and steps.")
