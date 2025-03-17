@@ -8,6 +8,7 @@ import com.management.demo.item.exception.ItemNotFoundException;
 import com.management.demo.order.IOrderRepository;
 import com.management.demo.order.Order;
 import com.management.demo.order.OrderStatus;
+import com.management.demo.stockmovement.exception.StockMovementNotFoundException;
 import com.management.demo.user.IUserRepository;
 import com.management.demo.user.User;
 import com.management.demo.user.UserService;
@@ -16,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -103,4 +106,34 @@ public class StockMovementService {
             log.info("ORDER COMPLETED but email not sent, orderId:" + order.getId());
         }
     }
+
+    public List<StockMovementDTO> getAllStockMovements() {
+        List<StockMovement> stockMovements = stockMovementRepository.findAll();  // Busca todos os StockMovements
+        List<StockMovementDTO> stockMovementDTOs = new ArrayList<>();
+
+        for (StockMovement stockMovement : stockMovements) {
+            StockMovementDTO stockMovementDTO = new StockMovementDTO(
+                    stockMovement.getId(),
+                    stockMovement.getCreationDate(),
+                    new ItemDTO(stockMovement.getItem().getId(), stockMovement.getItem().getName()),
+                    stockMovement.getQuantity()
+            );
+            stockMovementDTOs.add(stockMovementDTO);
+        }
+
+        return stockMovementDTOs;
+    }
+
+    public StockMovementDTO getStockMovementById(UUID stockMovementId) {
+        StockMovement stockMovement = stockMovementRepository.findById(stockMovementId)
+                .orElseThrow(() -> new StockMovementNotFoundException(stockMovementId));
+
+        return new StockMovementDTO(
+                stockMovement.getId(),
+                stockMovement.getCreationDate(),
+                new ItemDTO(stockMovement.getItem().getId(), stockMovement.getItem().getName()),
+                stockMovement.getQuantity()
+        );
+    }
+
 }
