@@ -158,6 +158,8 @@ Use the `POST /items` endpoint to create items. You can provide the necessary de
   "name": "chair"
 }
 
+```
+
 ### Step 2.1: Update Items (Not Required)
 
 Use the `PATCH /items` endpoint to update item name. Provide only the `name` field. You do **not** need to provide an `id`.
@@ -168,6 +170,7 @@ Use the `PATCH /items` endpoint to update item name. Provide only the `name` fie
 {
   "name": "chair one"
 }
+```
 
 ### Step 3: Create Stock Movements
 
@@ -184,6 +187,7 @@ Id should be replaced with the real id of the item in your system
   },
   "quantity": 1
 }
+```
 
 ### Step 4: Create Orders
 
@@ -206,6 +210,7 @@ Id of the user should be replaced with the real id of the user in your system
     "id": "8c2eaab2-83ed-48ad-a36b-2ff884987026"
   }
 }
+```
 
 ### Step 5: Alternate Requests
 
