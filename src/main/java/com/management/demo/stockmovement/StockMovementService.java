@@ -11,12 +11,12 @@ import com.management.demo.order.OrderStatus;
 import com.management.demo.stockmovement.exception.StockMovementNotFoundException;
 import com.management.demo.user.IUserRepository;
 import com.management.demo.user.User;
-import com.management.demo.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,12 +45,14 @@ public class StockMovementService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public StockMovementDTO createStockMovement(StockMovementDTO stockMovementDTO) throws MessagingException {
         Item item = itemRepository.findById(stockMovementDTO.getItem().getId())
                 .orElseThrow(() -> new ItemNotFoundException(stockMovementDTO.getItem().getId()));
 
         StockMovement stockMovement = new StockMovement(item, stockMovementDTO.getQuantity());
         stockMovementRepository.save(stockMovement);
+        log.info("Stock-movement created for item {}, with stock-movement id: {},  quantity: {}", item.getName(),stockMovement.getId(), stockMovement.getQuantity());
 
         processOrders(item);
 
@@ -59,6 +61,7 @@ public class StockMovementService {
                 stockMovement.getQuantity());
     }
 
+    @Transactional
     private void processOrders(Item item) throws MessagingException {
 
         List<Order> pendingOrders = orderRepository.findByItemAndStatus(item, OrderStatus.PENDING);
@@ -75,14 +78,16 @@ public class StockMovementService {
 
                 StockMovement movementForOrder = new StockMovement(item, -allocatedQuantity);
                 stockMovementRepository.save(movementForOrder);
-
                 order.addStockMovement(movementForOrder);
+                log.info("Stock-movement created with id: {}, for order with id: {}, quantity: {}", movementForOrder.getId(), order.getId(), movementForOrder.getQuantity());
 
                 // if there is still available stock
                 if (availableStock >= missingQuantity) {
                     order.completeOrder();
 
-                    sendOrderConfirmationEmail(order, item);
+                    if (!sendOrderConfirmationEmail(order, item)){
+                        log.info("ORDER COMPLETED but email not sent, orderId:" + order.getId());
+                    }
                 }
                 availableStock -= allocatedQuantity;
             }
@@ -90,20 +95,33 @@ public class StockMovementService {
         orderRepository.saveAll(pendingOrders);
     }
 
-    private void sendOrderConfirmationEmail(Order order, Item item) throws MessagingException {
+    private boolean sendOrderConfirmationEmail(Order order, Item item) throws MessagingException {
 
-        String orderDetails = "Order ID: " + order.getId() +
-                "\nItem: " + item.getName() +
-                "\nQuantity: " + order.getQuantity() +
+        String orderDetails = "Order ID: " + order.getId() + ";" +
+                "\nItem: " + item.getName() + ";" +
+                "\nQuantity: " + order.getQuantity() + ";" +
                 "\nStatus: " + order.getStatus();
 
         Optional<User> maybeUser = userRepository.findById(order.getUser().getId());
 
         if (maybeUser.isPresent()) {
             User user = maybeUser.get();
-            emailService.sendOrderConfirmationEmail(user.getEmail(), orderDetails);
+            try{
+                emailService.sendOrderConfirmationEmail(user.getEmail(), orderDetails);
+                log.info("Email sent to user with id: {}, email: {}, order id: {}, order status: {}",
+                        order.getUser().getId(),
+                        order.getUser().getEmail(),
+                        order.getId(),
+                        order.getStatus().name());
+                return true;
+
+            }catch (Exception e){
+                log.error("Error sending email to {}. Message: {}", order.getUser().getEmail(), e.getMessage());
+                throw e;
+            }
+
         } else {
-            log.info("ORDER COMPLETED but email not sent, orderId:" + order.getId());
+            return false;
         }
     }
 
