@@ -1,5 +1,6 @@
 package com.management.demo.order;
 
+import com.management.demo.email.EmailService;
 import com.management.demo.item.IItemRepository;
 import com.management.demo.item.Item;
 import com.management.demo.item.ItemDTO;
@@ -8,20 +9,19 @@ import com.management.demo.order.exception.OrderNotFoundException;
 import com.management.demo.stockmovement.IStockMovementRepository;
 import com.management.demo.stockmovement.StockMovement;
 import com.management.demo.stockmovement.StockMovementDTO;
-import com.management.demo.user.User;
 import com.management.demo.user.IUserRepository;
+import com.management.demo.user.User;
 import com.management.demo.user.exceptions.UserNotFoundException;
-import com.management.demo.email.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,6 +46,7 @@ public class OrderService {
         this.emailService = emailService;
     }
 
+    @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO) throws MessagingException {
 
         Optional<Item> itemOpt = itemRepository.findById(orderDTO.getItem().getId());
@@ -63,40 +64,59 @@ public class OrderService {
         int availableStock = itemRepository.getAvailableStock(item.getId());
 
         // check if there is available stock
+        Order order = new Order(item, orderDTO.getQuantity(), user);
         if (availableStock >= orderDTO.getQuantity()) {
 
-            Order order = new Order(item, orderDTO.getQuantity(), user);
-            order.setStatus(OrderStatus.COMPLETED);
+            order.setStatus(OrderStatus.PENDING);
+            orderRepository.save(order);
+
+            log.info("Order created, id: {}, item: {}, quantity: {}, status: {}",
+                    order.getId(), order.getItem().getName(),order.getQuantity(), order.getStatus().name());
 
             // create stock movement
             StockMovement stockMovement = new StockMovement(item, -orderDTO.getQuantity());
             stockMovementRepository.save(stockMovement);
+            log.info("Stock-movement created with id: {}, for order with id: {}, quantity: {}",
+                    stockMovement.getId(), order.getId(), stockMovement.getQuantity());
 
             order.addStockMovement(stockMovement);
+            order.setStatus(OrderStatus.COMPLETED);
             orderRepository.save(order);
 
             sendOrderConfirmationEmail(order);
+            log.info("ORDER COMPLETED, id: {}, item: {}, status: {}",
+                    order.getId(), order.getItem().getName(), order.getStatus().name());
 
-            return OrderMapper.toDTO(order);
         } else {
 
-            Order order = new Order(item, orderDTO.getQuantity(), user);
             order.setStatus(OrderStatus.PENDING);
             orderRepository.save(order);
+            log.info("Order created, id: {}, item: {}, quantity: {}, status: {}",
+                    order.getId(), order.getItem().getName(), order.getQuantity(), order.getStatus().name());
 
-            return OrderMapper.toDTO(order);
         }
+        return OrderMapper.toDTO(order);
     }
 
     private void sendOrderConfirmationEmail(Order order) throws MessagingException {
 
-        String orderDetails = "Order ID: " + order.getId() +
-                "\nItem: " + order.getItem().getName() +
-                "\nQuantity: " + order.getQuantity() +
+        String orderDetails = "Order ID: " + order.getId() + ";" +
+                "\nItem: " + order.getItem().getName() + ";" +
+                "\nQuantity: " + order.getQuantity() + ";" +
                 "\nStatus: " + order.getStatus();
 
-        emailService.sendOrderConfirmationEmail(order.getUser().getEmail(), orderDetails);
-        log.info("ORDER COMPLETED " + order.getId());
+        try{
+            emailService.sendOrderConfirmationEmail(order.getUser().getEmail(), orderDetails);
+            log.info("Email sent to user with id: {}, email: {}, order id: {}, order status: {}",
+                    order.getUser().getId(),
+                    order.getUser().getEmail(),
+                    order.getId(),
+                    order.getStatus().name());
+
+        } catch (Exception e){
+            log.error("Error sending email to {}. Message: {}", order.getUser().getEmail(), e.getMessage());
+            throw e;
+        }
     }
 
     public List<OrderDTO> getAllOrders(OrderStatus status) {
@@ -122,7 +142,6 @@ public class OrderService {
         return OrderMapper.toDTO(order);
     }
 
-
     public List<StockMovementDTO> getStockMovementsByOrderId(UUID orderId) {
 
         Optional<Order> maybeOrder = orderRepository.findById(orderId);
@@ -145,5 +164,4 @@ public class OrderService {
         }
         return new ArrayList<>();
     }
-
 }

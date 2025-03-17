@@ -10,9 +10,6 @@ import java.util.UUID;
 @Repository
 public interface IOrderRepository extends JpaRepository<Order, UUID> {
 
-    // todo this will be used later but still need some features
-    Order findFirstByItemAndStatusOrderByCreatedDateAsc(Item item, OrderStatus status);
-
     List<Order> findByItemAndStatus(Item item, OrderStatus status);
     List<Order> findByStatus(OrderStatus status);
 }
