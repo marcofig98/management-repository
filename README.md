@@ -144,8 +144,8 @@ Use the `PATCH /users` endpoint to update users. Provide only the `name` and `em
 
 ```json
 {
-  "name": "john",
-  "email": "example@outlook.com"
+  "name": "john doe",
+  "email": "exampleUpdated@outlook.com"
 }
 ```
 
