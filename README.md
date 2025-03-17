@@ -134,6 +134,7 @@ Use the `POST /users` endpoint to create users. Provide only the `name` and `ema
   "name": "john",
   "email": "example@outlook.com"
 }
+```
 
 ### Step 1.1: Update Users (Not Required)
 
@@ -146,6 +147,7 @@ Use the `PATCH /users` endpoint to update users. Provide only the `name` and `em
   "name": "john",
   "email": "example@outlook.com"
 }
+```
 
 ### Step 2: Create Items
 
@@ -157,7 +159,6 @@ Use the `POST /items` endpoint to create items. You can provide the necessary de
 {
   "name": "chair"
 }
-
 ```
 
 ### Step 2.1: Update Items (Not Required)
