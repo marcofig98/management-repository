@@ -138,7 +138,7 @@ Use the `POST /users` endpoint to create users. Provide only the `name` and `ema
 
 ### Step 1.1: Update Users (Not Required)
 
-Use the `PATCH /users` endpoint to update users. Provide only the `name` and `email` fields. You do **not** need to provide an `id`.
+Use the `PATCH /users/{id}` endpoint to update users. Provide only the `name` and `email` fields in the body. `id` should be provided in the path.
 
 #### Request Body Example:
 
@@ -163,7 +163,7 @@ Use the `POST /items` endpoint to create items. You can provide the necessary de
 
 ### Step 2.1: Update Items (Not Required)
 
-Use the `PATCH /items` endpoint to update item name. Provide only the `name` field. You do **not** need to provide an `id`.
+Use the `PATCH /items/{id}` endpoint to update item name. Provide only the `name` field. `id` should be provided in the path.
 
 #### Request Body Example:
 
