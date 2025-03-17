@@ -19,7 +19,7 @@ The Order Management API enables the following functionalities:
 
 - **Order Completion**:
   - When stock is available for an order, the order is processed, and the user is notified via email about the status of the order.
-  - If there is no stock, the order remains in the `PENDING` state.
+  - If there is no enough stock, the order remains in the `PENDING` state.
 
 - **Stock Movement Impact**:
   - When stock movements are created, the system checks if any pending orders can be completed with the newly available stock. 
@@ -134,6 +134,7 @@ Use the `POST /users` endpoint to create users. Provide only the `name` and `ema
   "name": "john",
   "email": "example@outlook.com"
 }
+
 ### Step 1.1: Update Users (Not Required)
 
 Use the `PATCH /users` endpoint to update users. Provide only the `name` and `email` fields. You do **not** need to provide an `id`.
