@@ -108,7 +108,7 @@ public class StockMovementService {
     }
 
     public List<StockMovementDTO> getAllStockMovements() {
-        List<StockMovement> stockMovements = stockMovementRepository.findAll();  // Busca todos os StockMovements
+        List<StockMovement> stockMovements = stockMovementRepository.findAll();
         List<StockMovementDTO> stockMovementDTOs = new ArrayList<>();
 
         for (StockMovement stockMovement : stockMovements) {
