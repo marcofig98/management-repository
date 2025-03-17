@@ -50,8 +50,9 @@ public class UserService {
         return user.map(UserMapper::toDTO);
     }
 
-    public UserDTO updateUser(UUID id, UserDTO userDTO) {
+    public UserDTO updateUser(UserDTO userDTO) {
 
+        UUID id = userDTO.getId();
 
         Optional<User> existingUser = userRepository.findById(id);
 

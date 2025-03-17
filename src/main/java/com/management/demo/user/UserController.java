@@ -36,7 +36,8 @@ public class UserController {
             description = "You should not provide id in the body, provide only name, email or both." +
             " Name and email can be changed")
     public UserDTO updateUser(@PathVariable UUID id, @RequestBody UserDTO userDTO) {
-        return userService.updateUser(id, userDTO);
+        userDTO.setId(id);
+        return userService.updateUser(userDTO);
     }
 
     @GetMapping
