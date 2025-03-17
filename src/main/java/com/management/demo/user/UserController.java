@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update user",
             description = "You should not provide id in the body, provide only name, email or both." +
             " Name and email can be changed")
